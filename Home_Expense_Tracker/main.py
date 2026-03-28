@@ -74,6 +74,14 @@ class CLIController:
             
             self.manager.process_new_room(room_number=i, rent=rent, persons=persons)
 
+        while True:
+            try:
+                water_bill_text = input("Enter the water bill\n")
+                water_bill = float(water_bill_text)
+                break
+            except ValueError:
+                print("Please enter a valid water bill number.")
+
         # Print the final calculated math
         print("\n--- Seat Rent Calculations ---")
         rent_results = self.manager.calculate_room_rents()
