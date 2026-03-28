@@ -74,6 +74,27 @@ class CLIController:
             
             self.manager.process_new_room(room_number=i, rent=rent, persons=persons)
 
+        while True:
+            try:
+                wifi_bill = float(input("Enter the Wi-Fi bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+                
+        while True:
+            try:
+                bua_bill = float(input("Enter the Bua bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+
+        while True:
+            try:
+                waste_bill = float(input("Enter the waste bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+
         print("\n--- Seat Rent Calculations ---")
         rent_results = self.manager.calculate_room_rents()
         for room_no, rent_per_person in rent_results:
