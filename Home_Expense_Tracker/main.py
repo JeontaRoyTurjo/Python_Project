@@ -26,16 +26,29 @@ class ExpenseManager:
         room = Room(room_number, rent, persons)
         self.house.add_room(room)
 
-    def calculate_room_rents(self):
-        """Calculates the rent per person for each room."""
+    def get_total_persons(self):
+        """Returns the total number of persons in the house."""
+        return sum(room.persons for room in self.house.rooms)
+
+    def calculate_room_rents(self, total_variable_costs=0.0):
+        """Calculates the rent per person for each room + shared costs."""
         results = []
+        total_persons = self.get_total_persons()
+        shared_cost_per_head = 0.0
+        
+        if total_persons > 0:
+            shared_cost_per_head = total_variable_costs / total_persons
+
         for room in self.house.rooms:
             if room.persons > 0:
                 rent_per_person = room.rent / room.persons
             else:
                 rent_per_person = 0.0
-            results.append((room.room_number, rent_per_person))
-        return results
+            
+            total_per_head = rent_per_person + shared_cost_per_head
+            results.append((room.room_number, rent_per_person, total_per_head))
+            
+        return results, shared_cost_per_head
 
 class CLIController:
     """Handles everything printed to the console and user inputs."""
@@ -74,11 +87,75 @@ class CLIController:
             
             self.manager.process_new_room(room_number=i, rent=rent, persons=persons)
 
+        while True:
+            try:
+                wifi_bill = float(input("Enter the Wi-Fi bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+                
+        while True:
+            try:
+                bua_bill = float(input("Enter the Bua bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+
+        while True:
+            try:
+                waste_bill = float(input("Enter the waste bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.") 
+
+        while True:
+            try:
+                electricity_bill = float(input("Enter the electricity bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+
+        while True:
+            try:
+                gas_bill = float(input("Enter the gas bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+
+        while True:
+            try:
+                lift_bill = float(input("Enter the lift bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+
+        while True:
+            try:
+                utility_bill = float(input("Enter the utility bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+
+        while True:
+            try:
+                water_bill = float(input("Enter the water bill:\n"))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+
         # Print the final calculated math
         print("\n--- Seat Rent Calculations ---")
-        rent_results = self.manager.calculate_room_rents()
-        for room_no, rent_per_person in rent_results:
-            print(f"Room {room_no} per-head rent: {rent_per_person:.2f}")
+        
+        total_variable_costs = wifi_bill + bua_bill + waste_bill + electricity_bill + gas_bill + lift_bill + utility_bill + water_bill
+        
+        rent_results, shared_cost_per_head = self.manager.calculate_room_rents(total_variable_costs=total_variable_costs)
+        
+        if total_variable_costs > 0:
+            print(f"Total Shared Bills: {total_variable_costs:.2f}")
+            print(f"Total bill except rent per-head: {shared_cost_per_head:.2f}\n")
+            
+        for room_no, rent_per_person, total_per_head in rent_results:
+            print(f"Room {room_no} -> Base rent per-head: {rent_per_person:.2f} | Total to pay (with bills): {total_per_head:.2f}")
 
 if __name__ == "__main__":
     controller = CLIController()
