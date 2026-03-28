@@ -32,7 +32,19 @@ class ExpenseManager:
 
     def calculate_room_rents(self, total_variable_costs=0.0):
         """Calculates the rent per person for each room + shared costs."""
+    def get_total_persons(self):
+        """Returns the total number of persons in the house."""
+        return sum(room.persons for room in self.house.rooms)
+
+    def calculate_room_rents(self, total_variable_costs=0.0):
+        """Calculates the rent per person for each room + shared costs."""
         results = []
+        total_persons = self.get_total_persons()
+        shared_cost_per_head = 0.0
+        
+        if total_persons > 0:
+            shared_cost_per_head = total_variable_costs / total_persons
+
         total_persons = self.get_total_persons()
         shared_cost_per_head = 0.0
         
@@ -44,6 +56,11 @@ class ExpenseManager:
                 rent_per_person = room.rent / room.persons
             else:
                 rent_per_person = 0.0
+            
+            total_per_head = rent_per_person + shared_cost_per_head
+            results.append((room.room_number, rent_per_person, total_per_head))
+            
+        return results, shared_cost_per_head
             
             total_per_head = rent_per_person + shared_cost_per_head
             results.append((room.room_number, rent_per_person, total_per_head))
@@ -86,6 +103,14 @@ class CLIController:
                     print("Please enter a valid number of persons.")
             
             self.manager.process_new_room(room_number=i, rent=rent, persons=persons)
+
+        while True:
+            try:
+                water_bill_text = input("Enter the water bill\n")
+                water_bill = float(water_bill_text)
+                break
+            except ValueError:
+                print("Please enter a valid water bill number.")
 
         while True:
             try:
@@ -145,6 +170,17 @@ class CLIController:
 
         # Print the final calculated math
         print("\n--- Seat Rent Calculations ---")
+        
+        total_variable_costs = water_bill
+        
+        rent_results, shared_cost_per_head = self.manager.calculate_room_rents(total_variable_costs=total_variable_costs)
+        
+        if total_variable_costs > 0:
+            print(f"Total Shared Variable Costs: {total_variable_costs:.2f}")
+            print(f"Variable Costs Per-Head: {shared_cost_per_head:.2f}\n")
+            
+        for room_no, rent_per_person, total_per_head in rent_results:
+            print(f"Room {room_no} -> Base rent per-head: {rent_per_person:.2f} | Total to pay (with bills): {total_per_head:.2f}")
         
         total_variable_costs = wifi_bill + bua_bill + waste_bill + electricity_bill + gas_bill + lift_bill + utility_bill + water_bill
         
