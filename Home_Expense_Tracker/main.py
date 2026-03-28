@@ -87,24 +87,27 @@ class CLIController:
             
             self.manager.process_new_room(room_number=i, rent=rent, persons=persons)
 
-        while True:
-            try:
-                water_bill_text = input("Enter the water bill\n")
-                water_bill = float(water_bill_text)
-                break
-            except ValueError:
-                print("Please enter a valid water bill number.")
+        # Collect all shared bills
+        bill_names = ["Wi-Fi", "Bua", "waste", "electricity", "gas", "lift", "utility", "water"]
+        total_variable_costs = 0.0
+        
+        for bill_name in bill_names:
+            while True:
+                try:
+                    amount = float(input(f"Enter the {bill_name} bill:\n"))
+                    total_variable_costs += amount
+                    break
+                except ValueError:
+                    print(f"Please enter a valid number for the {bill_name} bill.")
 
         # Print the final calculated math
         print("\n--- Seat Rent Calculations ---")
         
-        total_variable_costs = water_bill
-        
         rent_results, shared_cost_per_head = self.manager.calculate_room_rents(total_variable_costs=total_variable_costs)
         
         if total_variable_costs > 0:
-            print(f"Total Shared Variable Costs: {total_variable_costs:.2f}")
-            print(f"Variable Costs Per-Head: {shared_cost_per_head:.2f}\n")
+            print(f"Total Shared Bills: {total_variable_costs:.2f}")
+            print(f"Total bill except rent per-head: {shared_cost_per_head:.2f}\n")
             
         for room_no, rent_per_person, total_per_head in rent_results:
             print(f"Room {room_no} -> Base rent per-head: {rent_per_person:.2f} | Total to pay (with bills): {total_per_head:.2f}")
