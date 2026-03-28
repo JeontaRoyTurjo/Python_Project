@@ -26,6 +26,17 @@ class ExpenseManager:
         room = Room(room_number, rent, persons)
         self.house.add_room(room)
 
+    def calculate_room_rents(self):
+        """Calculates the rent per person for each room."""
+        results = []
+        for room in self.house.rooms:
+            if room.persons > 0:
+                rent_per_person = room.rent / room.persons
+            else:
+                rent_per_person = 0.0
+            results.append((room.room_number, rent_per_person))
+        return results
+
 class CLIController:
     """Handles everything printed to the console and user inputs."""
     def __init__(self):
@@ -62,6 +73,11 @@ class CLIController:
                     print("Please enter a valid number of persons.")
             
             self.manager.process_new_room(room_number=i, rent=rent, persons=persons)
+
+        print("\n--- Seat Rent Calculations ---")
+        rent_results = self.manager.calculate_room_rents()
+        for room_no, rent_per_person in rent_results:
+            print(f"Room {room_no} per-head rent: {rent_per_person:.2f}")
 
 if __name__ == "__main__":
     controller = CLIController()
