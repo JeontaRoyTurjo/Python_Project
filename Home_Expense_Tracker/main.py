@@ -101,16 +101,24 @@ class CLIController:
                     print(f"Please enter a valid number for the {bill_name} bill.")
 
         # Print the final calculated math
-        print("\n--- Seat Rent Calculations ---")
+        print("\n==========================================")
+        print("             Final Cost Breakdown         ")
+        print("==========================================\n")
         
         rent_results, shared_cost_per_head = self.manager.calculate_room_rents(total_variable_costs=total_variable_costs)
         
         if total_variable_costs > 0:
-            print(f"Total Shared Bills: {total_variable_costs:.2f}")
-            print(f"Total bill except rent per-head: {shared_cost_per_head:.2f}\n")
+            print("--- Shared House Bills ---")
+            print(f"  Total combined bills:   {total_variable_costs:.2f}")
+            print(f"  Cost per person:        {shared_cost_per_head:.2f}\n")
             
+        print("--- Individual Room Breakdowns ---")
         for room_no, rent_per_person, total_per_head in rent_results:
-            print(f"Room {room_no} -> Base rent per-head: {rent_per_person:.2f} | Total to pay (with bills): {total_per_head:.2f}")
+            print(f"  Room {room_no}:")
+            print(f"    Base Rent (per person): {rent_per_person:.2f}")
+            print(f"    Total Due (with bills): {total_per_head:.2f}\n")
+            
+        print("==========================================")
 
 if __name__ == "__main__":
     controller = CLIController()
